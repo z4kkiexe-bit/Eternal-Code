@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZYFER.AI</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #080808;
+            --surface: #111111;
+            --border: #222;
+            --accent: #a855f7;
+            --accent2: #6366f1;
+            --text: #e8e8e8;
+            --dim: #555;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Syne', sans-serif;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        
+        header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--surface);
+            
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00b4ff, #0066ff);
+            font-family: 'Space Mono', monospace;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+            
+        }
+
+        .status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 8px #22c55e;
+            margin-left: auto;
+        }
+
+        /* Chat area */
+        #chat {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+        }
+
+        #chat::-webkit-scrollbar { width: 4px; }
+        #chat::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+        .welcome {
+            text-align: center;
+            margin: auto;
+            opacity: 0.4;
+        }
+
+        .welcome h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, #00b4ff, #0066ff);
+            font-family: 'Space Mono', monospace;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .welcome p {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            margin-top: 8px;
+            color: var(--dim);
+        }
+
+        /* Messages */
+        .msg {
+            display: flex;
+            flex-direction: column;
+            max-width: 75%;
+            gap: 4px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .msg.user { align-self: flex-end; align-items: flex-end; }
+        .msg.ai { align-self: flex-start; align-items: flex-start; }
+
+        .bubble {
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .msg.user .bubble {
+            background: linear-gradient(135deg, #00b4ff, #0066ff);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .msg.ai .bubble {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-bottom-left-radius: 4px;
+        }
+
+        .label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--dim);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* Typing indicator */
+        .typing {
+            display: flex;
+            gap: 4px;
+            padding: 14px 16px;
+        }
+
+        .typing span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00b4ff, #0066ff);
+            animation: bounce 1.2s infinite;
+        }
+
+        .typing span:nth-child(2) { animation-delay: 0.2s; }
+        .typing span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes bounce {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-6px); opacity: 1; }
+        }
+
+        /* Input area */
+        #input-area {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        } 
+        .welcome img {
+    border-radius: 50%;
+    border: 2px solid  #00b4ff;
+
+}
+
+        #input {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-family: 'Syne', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        #input:focus { border-color: #00b4ff; }
+        #input::placeholder { color: var(--dim); }
+
+        #send-btn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #00b4ff, #0066ff);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+            letter-spacing: 1px;
+        }
+
+        #send-btn:hover { opacity: 0.85; }
+        #send-btn:active { transform: scale(0.97); }
+        #send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">ZYFER.AI</div>
+        <div style="font-size: 0.7rem; color: #555; font-family: monospace;">Dev by Zacky</div>
+        <div class="status"></div>
+    </header>
+
+    <div id="chat">
+        <div class="welcome">
+            <img src="/static/Z.jpg" width="120">
+            <h2>ZYFER.AI</h2>
+            <p>sans.</p>
+            <p>Github Gua :https://github.com/z4kkiexe-bit</p>
+        </div>
+    </div>
+
+    <div id="input-area">
+        <input id="input" placeholder="Ketik pesan..." autocomplete="off" />
+        <button id="send-btn" onclick="kirim()">KIRIM</button>
+    </div>
+
+    <script>
+        const chat = document.getElementById('chat');
+        const input = document.getElementById('input');
+        const btn = document.getElementById('send-btn');
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                kirim();
+            }
+        });
+
+        function addMsg(teks, role) {
+            // Remove welcome screen on first message
+            const welcome = chat.querySelector('.welcome');
+            if (welcome) welcome.remove();
+
+            const div = document.createElement('div');
+            div.className = `msg ${role}`;
+            div.innerHTML = `
+                <div class="label">${role === 'user' ? 'KAMU' : 'ZYFER'}</div>
+                <div class="bubble">${teks}</div>
+            `;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+            return div;
+        }
+
+        function addTyping() {
+            const welcome = chat.querySelector('.welcome');
+            if (welcome) welcome.remove();
+
+            const div = document.createElement('div');
+            div.className = 'msg ai';
+            div.id = 'typing';
+            div.innerHTML = `
+                <div class="label">ZYFER</div>
+                <div class="bubble typing">
+                    <span></span><span></span><span></span>
+                </div>
+            `;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        async function kirim() {
+            const pesan = input.value.trim();
+            if (!pesan) return;
+
+            input.value = '';
+            btn.disabled = true;
+            addMsg(pesan, 'user');
+            addTyping();
+
+            try {
+                const res = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pesan })
+                });
+                const data = await res.json();
+
+                document.getElementById('typing')?.remove();
+                addMsg(data.balasan, 'ai');
+            } catch (err) {
+                document.getElementById('typing')?.remove();
+                addMsg('Error: gagal konek ke server.', 'ai');
+            }
+
+            btn.disabled = false;
+            input.focus();
+        }
+    </script>
+</body>
+</html>
